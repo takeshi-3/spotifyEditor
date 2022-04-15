@@ -5,10 +5,13 @@ import { defineComponent, useFetch, useContext } from '@nuxtjs/composition-api';
 export default defineComponent({
     setup(props, context) {
 
-        const clientId = process.env.CLIENT_ID;
-        const clientSecret = process.env.CLIENT_SECRET;
+        const { $axios, $config } = useContext();
 
-        const { $axios } = useContext();
+        const clientId = $config.clientId;
+        const clientSecret = $config.clientSecret;
+
+        console.log(clientId);
+
 
         const option = {
             headers: {
