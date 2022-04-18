@@ -51,14 +51,7 @@ export default {
     clientSecret: process.env.CLIENT_SECRET,
   },
 
-  axios: {
-    proxy: true,
-  },
-
-  proxy: {
-    '/api/': {
-      target: 'https://accounts.spotify.com/authorize',
-      pathRewrite: {'^/api/': '/'},
-    },
-  }
+  serverMiddleware: [
+    { path: '/api/authorize', handler: '~/api/authorize.ts' }
+  ]
 }

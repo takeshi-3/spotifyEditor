@@ -5,28 +5,20 @@ import { defineComponent, useFetch, useContext } from '@nuxtjs/composition-api';
 export default defineComponent({
     setup(props, context) {
 
-        const { $axios, $config } = useContext();
+        const { $config } = useContext();
 
         const clientId = $config.clientId;
-        const clientSecret = $config.clientSecret;
-
-        console.log(clientId);
-
-
-        const option = {
-            headers: {
-               'Access-Control-Allow-Origin': '*'
-            },
-            params: {
-                client_id: clientId,
-                response_type: "code",
-                redirect_uri: "http://localhost:3000/",
-                state: "aiwery823"
-            },
-        };
 
         const redirectToLoginURL = async (): Promise<void> => {
-            await $axios.get('/api/', option);
+            const url = new URL("https://accounts.spotify.com/authorize");
+            const params = new URLSearchParams([
+                ['client_id', clientId], 
+                ['response_type', 'code'],
+                ['redirect_uri', 'http://localhost:3000/api/authorize'],
+                ['state', 'aiwery823']
+            ]);
+            url.search = params.toString();
+            location.href = url.toString();
         };
 
         return {redirectToLoginURL};
