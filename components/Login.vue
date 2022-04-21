@@ -12,7 +12,7 @@ export default defineComponent({
         const redirectToLoginURL = async (): Promise<void> => {
             const url = new URL("https://accounts.spotify.com/authorize");
             const params = new URLSearchParams([
-                ['client_id', clientId], 
+                ['client_id', clientId],
                 ['response_type', 'code'],
                 ['redirect_uri', 'http://localhost:3000/api/authorize'],
                 ['state', 'aiwery823']

@@ -1,12 +1,11 @@
 import express from 'express';
-import { useContext } from '@nuxtjs/composition-api';
+// import { useContext } from '@nuxtjs/composition-api';
 import axios from 'axios';
 
-
 const app = express();
+// const { $axios } = useContext();
 
-app.get('/', (req, res) => {
-    if (!req.originalUrl) return;
+app.get('/', async (req, res) => {
 
     const params = new URLSearchParams(req.originalUrl.substring(req.originalUrl.indexOf('?')));
     console.log(req.originalUrl);
@@ -16,24 +15,24 @@ app.get('/', (req, res) => {
     console.log(code);
 
     if (error !== null || code === null) {
-        res.redirect('/#?error=authentificationFailed');
+        res.redirect('/#?error=authentificationFailed'); 
     } else {
         const clientSecret = process.env.CLIENT_SECRET;
+        const clientId = process.env.CLIENT_ID;
         const resParams = new URLSearchParams();
         resParams.append('grant_type', 'authorization_code');
         resParams.append('code', code);
-        resParams.append('redirect_uri', 'http://localhost:3000');
+        resParams.append('redirect_uri', 'http://localhost:3000/api/authorize');
 
-        const redirectTo = 'https://accounts.spotify.com/api/token?' + resParams.toString();
         const headers = {
-            'Authorization': `Basic ${new Buffer('client_id:' + clientSecret).toString('base64')}`,
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`
         };
 
-        //const data = axios.post()
+        const response = await axios.post('https://accounts.spotify.com/api/token', resParams, {headers: headers});
 
-        res.set(headers);
-        res.redirect(redirectTo);
+        res.cookie('user', response.data.access_token, {expires: new Date(Date.now() + 1 * 3600000), httpOnly: true, secure: true});
+        res.redirect('/');
     }
 });
 
